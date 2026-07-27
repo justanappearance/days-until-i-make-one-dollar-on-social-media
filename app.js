@@ -119,6 +119,7 @@ async function renderGrowthChart() {
           spanGaps: true,
           tension: 0.2,
           pointRadius: 2,
+          pointHitRadius: 15,
         }
       }),
     },
