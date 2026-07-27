@@ -124,6 +124,8 @@ async function renderGrowthChart() {
       }),
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
