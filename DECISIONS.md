@@ -44,3 +44,11 @@
 - Rejected: Keeping `social-stats` as its own deployed service that this project reads from.
 - Why rejected: Two Vercel projects to keep env vars in sync on, and a duplicated `api/stats.js`, for what is really one page.
 - Date: 2026-07-27
+
+## Instagram: "Instagram API with Instagram Login" (graph.instagram.com), not Facebook Login for Business
+- Decision: `lib/instagram.js` / `lib/instagramToken.js` / `api/instagram-authorize.js` / `api/instagram-callback.js` use the direct Instagram Login OAuth flow — `instagram.com/oauth/authorize` → `api.instagram.com/oauth/access_token` (short-lived) → `graph.instagram.com/access_token` (long-lived, ~60 days) → `graph.instagram.com/me?fields=followers_count`. Refresh happens automatically inside `fetchInstagramFollowerCount()` whenever the stored token is within 3 days of expiring, via `graph.instagram.com/refresh_access_token`.
+- Why: Confirmed from Mike's actual Meta app dashboard (use case "Manage messaging & content on Instagram," permissions `instagram_business_basic` etc., and the "Set up Instagram business login" step asking only for a redirect URL) — this is the newer product that doesn't require linking a Facebook Page, unlike the older Instagram Graph API via Facebook Login for Business. Confirmed by screenshot rather than assumed, per the earlier decision not to write OAuth code blind.
+- Rejected: Facebook Login for Business flow (graph.facebook.com, requires a linked Facebook Page).
+- Why rejected: Not what Mike's app was actually configured for — would have meant redoing the app setup.
+- No refresh_token concept here: Instagram's long-lived access token refreshes itself in place (there's no separate refresh_token), so `platform_tokens.refresh_token` stays unused for the `instagram` row.
+- Date: 2026-07-27
