@@ -128,12 +128,14 @@ async function renderGrowthChart() {
         title: {
           display: true,
           text: 'Sub / Follower Count',
+          align: 'center',
           color: '#f8fafc',
           font: { size: 15, weight: '600' },
           padding: { bottom: 16 },
         },
         legend: {
           position: 'bottom',
+          align: 'center',
           labels: { color: '#f8fafc', boxWidth: 12, boxHeight: 12, padding: 16 },
         },
         tooltip: {
