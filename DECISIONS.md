@@ -31,3 +31,8 @@
 - Decision: This tracker is a separate site/repo, same as the other two — no shared landing page linking all three (yet).
 - Why: User's own call when asked; can revisit later without much rework if he changes his mind.
 - Date: 2026-07-27
+
+## Growth chart reads directly from the shared `platform_stats` table (owned by social-stats)
+- Decision: Added a 3-line Chart.js graph (YouTube/Instagram/TikTok) under the day counter. `api/stats.js` here is a read-only copy of `social-stats`' endpoint, querying the same `platform_stats` table in the shared Supabase project, filtered client-side to dates on/after this tracker's `START_DATE`. This project never writes to that table — the `social-stats` project's daily cron is the only writer.
+- Why: Both projects already share one Supabase project/credentials; duplicating a tiny read-only GET endpoint is simpler than extracting a shared package for two files. Filtering to `START_DATE` makes sense here because that's also the day social-stats' data collection was set up, so it doubles as "growth since I set this goal."
+- Date: 2026-07-27

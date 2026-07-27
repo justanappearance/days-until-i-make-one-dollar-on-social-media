@@ -3,6 +3,12 @@ const MONTH_NAMES = ['January','February','March','April','May','June',
 const DAY_HEADERS = ['Su','Mo','Tu','We','Th','Fr','Sa']
 const START_DATE = new Date(2026, 6, 27) // July 27, 2026 — the day this goal was set
 
+const GROWTH_PLATFORMS = [
+  { key: 'youtube', label: 'YouTube', color: '#ef4444' },
+  { key: 'instagram', label: 'Instagram', color: '#eab308' },
+  { key: 'tiktok', label: 'TikTok', color: '#38bdf8' },
+]
+
 
 function formatDate(d) {
   const y = d.getFullYear()
@@ -76,6 +82,56 @@ function renderMonth(year, month, todayStr, entryMap, today) {
   return monthEl
 }
 
+async function renderGrowthChart() {
+  let stats = []
+  try {
+    const resp = await fetch('/api/stats')
+    if (resp.ok) stats = await resp.json()
+  } catch (e) {
+    console.error('Failed to load platform stats', e)
+  }
+
+  const startStr = formatDate(START_DATE)
+  const byPlatform = {}
+  for (const row of stats) {
+    if (row.date < startStr) continue
+    if (!byPlatform[row.platform]) byPlatform[row.platform] = []
+    byPlatform[row.platform].push(row)
+  }
+
+  const hasData = Object.keys(byPlatform).length > 0
+  document.getElementById('growth-empty').hidden = hasData
+  if (!hasData) return
+
+  const allDates = [...new Set(stats.filter(r => r.date >= startStr).map(r => r.date))].sort()
+
+  new Chart(document.getElementById('growth-chart'), {
+    type: 'line',
+    data: {
+      labels: allDates,
+      datasets: GROWTH_PLATFORMS.filter(p => byPlatform[p.key]).map(p => {
+        const rowsByDate = Object.fromEntries(byPlatform[p.key].map(r => [r.date, r.count]))
+        return {
+          label: p.label,
+          data: allDates.map(d => rowsByDate[d] ?? null),
+          borderColor: p.color,
+          backgroundColor: p.color,
+          spanGaps: true,
+          tension: 0.2,
+          pointRadius: 2,
+        }
+      }),
+    },
+    options: {
+      plugins: { legend: { labels: { color: '#f8fafc' } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#94a3b8', maxTicksLimit: 8 } },
+        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+      },
+    },
+  })
+}
+
 async function init() {
   const calendar = document.getElementById('calendar')
   calendar.innerHTML = '<p class="loading">Loading...</p>'
@@ -97,6 +153,8 @@ async function init() {
 
   const dayCount = Math.floor((today - START_DATE) / 864e5) + 1 // inclusive of start date; keeps counting forever
   document.getElementById('day-count').textContent = dayCount
+
+  renderGrowthChart()
 
   calendar.innerHTML = ''
 

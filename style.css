@@ -104,6 +104,18 @@ h1 {
 .dot.counted { background: var(--green); }
 .dot.milestone { background: var(--gold); }
 
+/* Growth chart */
+#growth {
+  margin-bottom: 2.5rem;
+}
+
+.chart-wrap {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  height: 260px;
+}
+
 /* Calendar grid */
 #calendar {
   display: grid;
