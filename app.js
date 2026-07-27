@@ -124,7 +124,30 @@ async function renderGrowthChart() {
       }),
     },
     options: {
-      plugins: { legend: { labels: { color: '#f8fafc' } } },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Sub / Follower Count',
+          color: '#f8fafc',
+          font: { size: 15, weight: '600' },
+          padding: { bottom: 16 },
+        },
+        legend: {
+          position: 'bottom',
+          labels: { color: '#f8fafc', boxWidth: 12, boxHeight: 12, padding: 16 },
+        },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          titleColor: '#f8fafc',
+          bodyColor: '#f8fafc',
+          borderColor: '#334155',
+          borderWidth: 1,
+          cornerRadius: 8,
+          padding: 10,
+          boxPadding: 4,
+          displayColors: true,
+        },
+      },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#94a3b8', maxTicksLimit: 8 } },
         y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
