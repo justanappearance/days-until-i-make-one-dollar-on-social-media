@@ -36,3 +36,11 @@
 - Decision: Added a 3-line Chart.js graph (YouTube/Instagram/TikTok) under the day counter. `api/stats.js` here is a read-only copy of `social-stats`' endpoint, querying the same `platform_stats` table in the shared Supabase project, filtered client-side to dates on/after this tracker's `START_DATE`. This project never writes to that table — the `social-stats` project's daily cron is the only writer.
 - Why: Both projects already share one Supabase project/credentials; duplicating a tiny read-only GET endpoint is simpler than extracting a shared package for two files. Filtering to `START_DATE` makes sense here because that's also the day social-stats' data collection was set up, so it doubles as "growth since I set this goal."
 - Date: 2026-07-27
+- Superseded: see next entry — folded into this project entirely a few hours later, same day.
+
+## Merged `social-stats` into this project; retired the standalone repo
+- Decision: Moved `lib/youtube.js`, `lib/upsertStat.js`, and `api/collect.js` from the separate `social-stats` repo into this project, added its daily cron (`/api/collect`, `0 13 * * *`) to this project's `vercel.json`, and deleted the `social-stats` GitHub repo.
+- Why: The follower-growth graph only ever existed to sit under this tracker's day counter — there was no independent use case for `social-stats` as its own product, and Mike explicitly said no shared hub across trackers, which was the one scenario where a separate reusable stats service would've paid off. Splitting it out first was premature; nothing had been deployed to `social-stats` on Vercel yet and no data had been collected, so this was a same-day, zero-cost consolidation rather than a real migration.
+- Rejected: Keeping `social-stats` as its own deployed service that this project reads from.
+- Why rejected: Two Vercel projects to keep env vars in sync on, and a duplicated `api/stats.js`, for what is really one page.
+- Date: 2026-07-27
