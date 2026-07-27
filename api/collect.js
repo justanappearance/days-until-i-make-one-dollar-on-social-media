@@ -1,11 +1,12 @@
 import { fetchYoutubeSubscriberCount } from '../lib/youtube.js'
 import { fetchInstagramFollowerCount } from '../lib/instagram.js'
+import { fetchTiktokFollowerCount } from '../lib/tiktok.js'
 import { upsertStat } from '../lib/upsertStat.js'
 
 const COLLECTORS = {
   youtube: fetchYoutubeSubscriberCount,
   instagram: fetchInstagramFollowerCount,
-  // tiktok: fetchTiktokFollowerCount, // added once the TikTok app is set up
+  tiktok: fetchTiktokFollowerCount,
 }
 
 export default async function handler(req, res) {

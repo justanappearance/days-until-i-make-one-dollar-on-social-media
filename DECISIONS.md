@@ -52,3 +52,13 @@
 - Why rejected: Not what Mike's app was actually configured for — would have meant redoing the app setup.
 - No refresh_token concept here: Instagram's long-lived access token refreshes itself in place (there's no separate refresh_token), so `platform_tokens.refresh_token` stays unused for the `instagram` row.
 - Date: 2026-07-27
+
+## TikTok domain verification: file at its real filename, not swapped into the homepage body
+- Decision: TikTok's "Verify URL prefix" step asked us to "upload to https://.../" — first attempt read this as "make the homepage body equal the file's content," which failed verification twice (once with a trailing newline, once without). Second attempt read it as "host the file at that URL prefix keeping its own filename" (`/tiktok<token>.txt`), which worked immediately.
+- Why: Worth recording since the instruction wording was genuinely ambiguous and the wrong reading temporarily took the real tracker page down. If TikTok (or another platform) asks for domain verification again, try the filename-preserving reading first.
+- Date: 2026-07-27
+
+## TikTok: Login Kit v2 OAuth (open.tiktokapis.com), user.info.basic + user.info.stats scopes
+- Decision: `lib/tiktok.js` / `lib/tiktokToken.js` / `api/tiktok-authorize.js` / `api/tiktok-callback.js` use TikTok's v2 Login Kit flow — `tiktok.com/v2/auth/authorize/` → `open.tiktokapis.com/v2/oauth/token/` (returns access_token + refresh_token, ~24h access token life) → `open.tiktokapis.com/v2/user/info/?fields=follower_count`. Unlike Instagram, TikTok does issue a real separate refresh_token, so `platform_tokens.refresh_token` is actually used for the `tiktok` row.
+- Why: Standard, stable TikTok API surface; confirmed against Mike's actual app dashboard (Login Kit product, those exact two scopes).
+- Date: 2026-07-27
